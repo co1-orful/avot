@@ -4,23 +4,28 @@ using UnityEngine;
 
 public class UnitScript : MonoBehaviour {
 
-	public GameObject obj;
-	public float range = 5f, moveSpeed = 3f, jumpHeight = 10f;
+	public float moveSpeed = 3f, jumpHeight = 10f;
 	private bool inAir;
 
+	new private Rigidbody2D rigidbody;
+	private Animator animator;
+	private SpriteRenderer sprite;
+
+	void Awake () 
+	{
+		rigidbody = GetComponent<Rigidbody2D>();
+		animator = GetComponent<Animator>();
+		sprite = GetComponentInChildren<SpriteRenderer>();
+	}
+
 	void Update () {
-		if((Input.GetKey(KeyCode.Space) | Input.GetKey(KeyCode.W)) && !inAir){
-			GetComponent<Rigidbody2D>().AddForce(new Vector2(0, jumpHeight), ForceMode2D.Impulse);
-			inAir = true;
-			}
-
-		if(Input.GetKey(KeyCode.LeftArrow) | Input.GetKey(KeyCode.A))
-			obj.transform.Translate(Vector2.left * moveSpeed * Time.deltaTime);
-
-		if(Input.GetKey(KeyCode.RightArrow) | Input.GetKey(KeyCode.D))
-			obj.transform.Translate(Vector2.right * moveSpeed * Time.deltaTime);
-
+		if(Input.GetButton("Jump") && !inAir)
+			Jump();
+		if (Input.GetButton("Horizontal")) 
+			Run();
 		}
+		
+
 
 	private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -28,4 +33,18 @@ public class UnitScript : MonoBehaviour {
             inAir = false;
     }
 
+   private void Jump()
+   {
+   	rigidbody.AddForce(new Vector2(0, jumpHeight), ForceMode2D.Impulse);
+		inAir = true;
+   }
+
+   private void Run()
+   {
+   	Vector3 direction = transform.right * Input.GetAxis("Horizontal");
+
+		transform.position = Vector3.MoveTowards(transform.position, transform.position + direction, moveSpeed * Time.deltaTime);
+
+		sprite.flipX = direction.x > 0.0f;
+   }
 }
