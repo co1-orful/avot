@@ -5,10 +5,10 @@ using UnityEngine.SceneManagement;
 
 public class MenuControl : MonoBehaviour
 {
-
+    public int sceneID;
     public void PlayPressed()
     {
-        SceneManager.LoadScene("Game", LoadSceneMode.Single);
+        StartCoroutine(Load(3));
     }
 
     public void SettingsPressed()
@@ -18,7 +18,7 @@ public class MenuControl : MonoBehaviour
 
     public void MainMenuPressed()
     {
-          SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+          StartCoroutine(Load(1));
     }
 
     public void ExitPressed()
@@ -27,14 +27,14 @@ public class MenuControl : MonoBehaviour
         Debug.Log("Exit pressed!");
     }
 
-    public void UnloadMainMenu()
-    {
-        SceneManager.UnloadScene("MainMenu");
-    }
-
-
     public void RestartPressed()
     {
-        SceneManager.LoadScene("Game");
+        StartCoroutine(Load(3));
+    }
+
+    IEnumerator Load(int sceneID)
+    {
+         yield return new WaitForSeconds(3);
+         SceneManager.LoadSceneAsync(sceneID);
     }
 }
